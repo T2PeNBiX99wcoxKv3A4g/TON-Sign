@@ -41,15 +41,17 @@ def update_round_log(round_log: list, round_type: str):
                 classification = "Classic"
             elif round_log[-2:] == ["Special", "Classic"]:
                 classification = "Special" if is_alternate_pattern(round_log, False) else "Classic"
-    
+
     round_log.append(classification)
 
     if len(round_log) > 7:
         round_log.pop(0)
 
+
 def is_alternate_pattern(round_log, bonus_flag):
     special_count = sum(1 for round_type in round_log[-6:] if round_type == "Special")
     return special_count > 2 or bonus_flag
+
 
 def predict_next_round(round_log, bonus_flag):
     if len(round_log) < 2:
@@ -85,7 +87,9 @@ def monitor_round_types(
             for line in lines:
                 if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
                     bonus_flag = True
-                    print("I think it's terror nights! Adjusting!\n.\n.\n.\nok should be good to go now :3\n===================")
+                    print(
+                        "I think it's terror nights! Adjusting!\n.\n.\n.\nok should be good to go now :3\n==================="
+                    )
 
                 if "OnMasterClientSwitched" in line:
                     print("***\n*** Host just left, next round will be a special.\n***")
@@ -103,7 +107,7 @@ def monitor_round_types(
                         if possible_round_type in known_round_types:
                             update_round_log(round_log, possible_round_type)
                             print(f"~ New round Started! ~\n~ Round Type: {possible_round_type} ~\n")
-                            
+
                             prediction = predict_next_round(round_log, bonus_flag)
                             special_count = sum(1 for round_type in round_log if round_type == "Special")
                             recent_rounds_log = get_recent_rounds_log(round_log)
