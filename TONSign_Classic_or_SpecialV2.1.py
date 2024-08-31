@@ -48,12 +48,12 @@ def update_round_log(round_log: list, round_type: str):
         round_log.pop(0)
 
 
-def is_alternate_pattern(round_log, bonus_flag):
+def is_alternate_pattern(round_log: list, bonus_flag: bool):
     special_count = sum(1 for round_type in round_log[-6:] if round_type == "Special")
     return special_count > 2 or bonus_flag
 
 
-def predict_next_round(round_log, bonus_flag):
+def predict_next_round(round_log: list, bonus_flag: bool):
     if len(round_log) < 2:
         return "Classic"
 
