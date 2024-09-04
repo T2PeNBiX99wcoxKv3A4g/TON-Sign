@@ -169,9 +169,8 @@ jp_round_types = [
     "ブラッドバス",
 ]
 
-# Directory and file search
-user_dir = os.getlogin()
-log_directory = f"C:\\Users\\{user_dir}\\AppData\\LocalLow\\VRChat\\VRChat"
+# Directory and file search UPDATED becuase some people's getlogin function EXPLODED so we're doing it this way now :3
+log_directory = os.path.join(os.path.expanduser("~"), "AppData", "LocalLow", "VRChat", "VRChat")
 latest_log_file = find_latest_log(log_directory)
 
 if latest_log_file:
