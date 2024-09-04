@@ -1,3 +1,4 @@
 {
-    "cSpell.words": ["pythonosc"]
+    "cSpell.words": ["pythonosc"],
+    "git.enableCommitSigning": true
 }
