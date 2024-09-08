@@ -1,6 +1,7 @@
-import os
 import glob
+import os
 import time
+
 from pythonosc.udp_client import SimpleUDPClient
 
 
@@ -72,11 +73,12 @@ def get_recent_rounds_log(round_log: list):
 
 
 def monitor_round_types(
-    log_file: str, known_round_types: list, known_jp_round_types: list, osc_client: SimpleUDPClient
+        log_file: str, known_round_types: list, known_jp_round_types: list, osc_client: SimpleUDPClient
 ):
     round_log: list = []
     last_position = 0
-    bonus_flag = False
+    last_prediction: bool = False
+    bonus_flag: bool = False
 
     while True:
         with open(log_file, "r", encoding="utf-8") as file:
@@ -94,6 +96,11 @@ def monitor_round_types(
                 if "OnMasterClientSwitched" in line:
                     print("***\n*** Host just left, next round will be a special.\n***")
                     osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                    last_prediction = True
+
+                if "Saving Avatar Data:" in line:
+                    print("***\n*** Saving Avatar Data, Resend the osc message.\n***")
+                    osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
 
                 if "Round type is" in line:
                     parts = line.split("Round type is")
@@ -119,15 +126,15 @@ def monitor_round_types(
                             # Send OSC message
                             if prediction == "Special":
                                 osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                                last_prediction = True
                             else:
                                 osc_client.send_message("/avatar/parameters/TON_Sign", False)
-
+                                last_prediction = False
             last_position = new_position
 
             # Disable the terror nights flag after 6 rounds (assume you have enough data at this point, lol, might still break if it's a new lobby tho sry)
             if len(round_log) >= 6:
                 bonus_flag = False
-
         time.sleep(10)
 
 
