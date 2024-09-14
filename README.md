@@ -11,7 +11,7 @@
 
 ---
 
-# [Download TON sign from the "Releases" page, or click here!](https://github.com/Emmyvee/TON-Sign/releases/tag/v2.2.0)
+# [Download TON sign from the "Releases" page, or click here!](https://github.com/Emmyvee/TON-Sign/releases/tag/v2.2.1) (NEW JP SUPPORT!)
 
 ### 🚨 Important Notice 🚨
 
@@ -39,9 +39,9 @@ Setting up the TON Sign on your avatar is quick and easy:
 
 ### Running the App
 
-1. **Launch** `TONSign_Classic_or_SpecialV2.2.exe`.
-2. **Start some rounds in Terrors of Nowhere.**
-    - The app will handle the rest!
+1. **Launch** `TONSign_Classic_or_SpecialV2.2.exe` OR `TONSign_JP_V2.2.exe` for JP!
+2. **Start some rounds in Terrors of Nowhere.** 
+   - The app will handle the rest!
 
 The app also prints out some useful debug info, such as if it detects a host-change. It also shows the types of up to the last 7 rounds.
 
@@ -50,6 +50,7 @@ The app also prints out some useful debug info, such as if it detects a host-cha
 ### Additional Information
 
 For more details, updates, or support, please feel more than free to message me **@e.vee** on discord. This app is very much a work in progress, and the first thing like this I've ever published, so feel free to contribute or provide feedback via GitHub!
+**Massive thank you** to **獅遊神がる // Shiyugami Garu** for assisting me with translation and testing the JP App! I couldn't have done it without your help! ^^
 
 Happy TON'ing, and say HI if you see me, \~Emerald~, in game!!
 
