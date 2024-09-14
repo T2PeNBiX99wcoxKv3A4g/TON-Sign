@@ -229,7 +229,7 @@ def monitor_round_types(
                             language_manager.info("logging.new_round_started", possible_round_type_for_print)
 
                             prediction = predict_next_round(round_log, bonus_flag)
-                            special_count = sum(1 for round_type in round_log if round_type == "Special")
+                            # special_count = sum(1 for round_type in round_log if round_type == "Special")
                             recent_rounds_log = get_recent_rounds_log(round_log)
 
                             language_manager.info("logging.next_round_should_be", recent_rounds_log, prediction)
