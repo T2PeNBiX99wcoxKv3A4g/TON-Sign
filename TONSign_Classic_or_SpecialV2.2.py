@@ -83,13 +83,13 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
+# noinspection PyShadowingNames
 class LanguageManager(object):
     language: str
     logger = logging.getLogger(NAME)
     language_dir = "Language"
     database: dict[str, dict] = {}
 
-    # noinspection PyShadowingNames
     def __init__(self, args: argparse.Namespace):
         level = logging.DEBUG if args.debug else logging.INFO
         logger.setLevel(level)
@@ -115,17 +115,20 @@ class LanguageManager(object):
             return text
         return self.database[self.language][text]
 
-    # noinspection PyShadowingNames
     def info(self, msg: str, *args: object):
         logger.info(self.get(msg), *args)
 
-    # noinspection PyShadowingNames
     def warning(self, msg: str, *args: object):
         logger.warning(self.get(msg), *args)
 
-    # noinspection PyShadowingNames
     def error(self, msg: str, *args: object):
         logger.error(self.get(msg), *args)
+
+    def debug(self, msg: str, *args: object):
+        logger.debug(self.get(msg), *args)
+
+    def dbg(self, msg: str, *args: object):
+        self.debug(msg, *args)
 
 
 language_manager: LanguageManager
@@ -175,21 +178,18 @@ def is_alternate_pattern(round_log: list[RoundType], bonus_flag: bool) -> bool:
     return special_count > 2 or bonus_flag
 
 
-def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> str:
-    classic = language_manager.get("logging.predict_next_round_classic")
-    special = language_manager.get("logging.predict_next_round_special")
-
+def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundType:
     if len(round_log) < 2:
-        return classic
+        return RoundType.Classic
 
     if round_log[-2:] == [RoundType.Special, RoundType.Special]:
         language_manager.info("logging.host_left_before")
         round_log.pop()
 
     if is_alternate_pattern(round_log, bonus_flag):
-        return classic if round_log[-1] == RoundType.Special else special
+        return RoundType.Classic if round_log[-1] == RoundType.Special else RoundType.Special
     else:
-        return special if round_log[-2:] == [RoundType.Classic, RoundType.Classic] else classic
+        return RoundType.Special if round_log[-2:] == [RoundType.Classic, RoundType.Classic] else RoundType.Classic
 
 
 def get_recent_rounds_log(round_log: list[RoundType]) -> str:
@@ -219,10 +219,12 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
                     elif "OnMasterClientSwitched" in line:
                         language_manager.info("logging.host_just_left")
                         osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                        language_manager.dbg("OnMasterClientSwitched: /avatar/parameters/TON_Sign %s", True)
                         last_prediction = True
                     elif "Saving Avatar Data:" in line:
                         language_manager.info("logging.saving_avatar_data")
                         osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
+                        language_manager.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
                     elif "Round type is" in line:
                         parts = line.split("Round type is")
                         if len(parts) > 1:
@@ -237,18 +239,23 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
                                 update_round_log(round_log, possible_round_type)
                                 language_manager.info("logging.new_round_started", possible_round_type_for_print)
 
+                                classic = language_manager.get("logging.predict_next_round_classic")
+                                special = language_manager.get("logging.predict_next_round_special")
                                 prediction = predict_next_round(round_log, bonus_flag)
                                 # special_count = sum(1 for round_type in round_log if round_type == "Special")
                                 recent_rounds_log = get_recent_rounds_log(round_log)
 
-                                language_manager.info("logging.next_round_should_be", recent_rounds_log, prediction)
+                                language_manager.info("logging.next_round_should_be", recent_rounds_log,
+                                                      special if prediction == RoundType.Special else classic)
 
                                 # Send OSC message
-                                if prediction == "Special":
+                                if prediction == RoundType.Special:
                                     osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                                    language_manager.dbg("Round type is: /avatar/parameters/TON_Sign %s", True)
                                     last_prediction = True
                                 else:
                                     osc_client.send_message("/avatar/parameters/TON_Sign", False)
+                                    language_manager.dbg("Round type is: /avatar/parameters/TON_Sign %s", False)
                                     last_prediction = False
                 last_position = new_position
 
