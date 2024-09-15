@@ -131,7 +131,7 @@ class LanguageManager(object):
 language_manager: LanguageManager
 
 
-def find_latest_log(directory: str):
+def find_latest_log(directory: str) -> str | None:
     log_files = glob.glob(os.path.join(directory, "*.txt"))
     if not log_files:
         language_manager.error("logging.no_log_file")
