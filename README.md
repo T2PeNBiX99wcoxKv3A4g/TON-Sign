@@ -31,8 +31,6 @@ Please don't use original exe file, Because the code is still the same.
 
 ## Original README
 
----
-
 # [Download TON sign from the "Releases" page, or click here!](https://github.com/Emmyvee/TON-Sign/releases/latest) (NEW JP SUPPORT!)
 
 ### 🚨 Important Notice 🚨
