@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 import time
+from enum import Enum
 from venv import logger
 
 import yaml
@@ -46,6 +47,13 @@ special_rounds = {"Fog", "Punished", "Sabotage", "Cracked", "Alternate", "Bloodb
 classic_rounds = {"Classic", "Blood Moon"}
 
 NAME = "TONSign_Classic_or_Special"
+
+
+class RoundType(Enum):
+    NIL = -1
+    Exempt = 0
+    Special = 1
+    Classic = 2
 
 
 class CustomFormatter(logging.Formatter):
@@ -133,28 +141,27 @@ def find_latest_log(directory: str):
     return latest_log
 
 
-def classify_round(round_type: str):
+def classify_round(round_type: str) -> RoundType:
     if round_type in exempt_rounds:
-        return "Exempt"
+        return RoundType.Exempt
     elif round_type in special_rounds:
-        return "Special"
+        return RoundType.Special
     elif round_type in classic_rounds:
-        return "Classic"
-    else:
-        return None
+        return RoundType.Classic
+    return RoundType.NIL
 
 
-def update_round_log(round_log: list, round_type: str):
-    classification = classify_round(round_type)
+def update_round_log(round_log: list[RoundType], round_type: str):
+    classification: RoundType = classify_round(round_type)
 
-    if classification == "Exempt":
+    if classification == RoundType.Exempt:
         if len(round_log) >= 2:
-            if round_log[-2:] == ["Classic", "Classic"]:
-                classification = "Special"
-            elif round_log[-2:] == ["Classic", "Special"]:
-                classification = "Classic"
-            elif round_log[-2:] == ["Special", "Classic"]:
-                classification = "Special" if is_alternate_pattern(round_log, False) else "Classic"
+            if round_log[-2:] == [RoundType.Classic, RoundType.Classic]:
+                classification = RoundType.Special
+            elif round_log[-2:] == [RoundType.Classic, RoundType.Special]:
+                classification = RoundType.Classic
+            elif round_log[-2:] == [RoundType.Special, RoundType.Classic]:
+                classification = RoundType.Special if is_alternate_pattern(round_log, False) else RoundType.Classic
 
     round_log.append(classification)
 
@@ -162,36 +169,37 @@ def update_round_log(round_log: list, round_type: str):
         round_log.pop(0)
 
 
-def is_alternate_pattern(round_log: list, bonus_flag: bool):
-    special_count = sum(1 for round_type in round_log[-6:] if round_type == "Special")
+def is_alternate_pattern(round_log: list[RoundType], bonus_flag: bool) -> bool:
+    special_count = sum(1 for round_type in round_log[-6:] if round_type == RoundType.Special)
     return special_count > 2 or bonus_flag
 
 
-def predict_next_round(round_log: list, bonus_flag: bool):
-    if len(round_log) < 2:
-        return "Classic"
+def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> str:
+    classic = language_manager.get("logging.predict_next_round_classic")
+    special = language_manager.get("logging.predict_next_round_special")
 
-    if round_log[-2:] == ["Special", "Special"]:
+    if len(round_log) < 2:
+        return classic
+
+    if round_log[-2:] == [RoundType.Special, RoundType.Special]:
         language_manager.info("logging.host_left_before")
         round_log.pop()
 
     if is_alternate_pattern(round_log, bonus_flag):
-        return "Classic" if round_log[-1] == "Special" else "Special"
+        return classic if round_log[-1] == RoundType.Special else special
     else:
-        return "Special" if round_log[-2:] == ["Classic", "Classic"] else "Classic"
+        return special if round_log[-2:] == [RoundType.Classic, RoundType.Classic] else classic
 
 
-def get_recent_rounds_log(round_log: list):
+def get_recent_rounds_log(round_log: list[RoundType]) -> str:
     return ", ".join([language_manager.get(
-        "logging.recent_rounds_log_classic") if round_type == "Classic" else language_manager.get(
+        "logging.recent_rounds_log_classic") if round_type == RoundType.Classic else language_manager.get(
         "logging.recent_rounds_log_special") for round_type in round_log])
 
 
 # noinspection PyShadowingNames
-def monitor_round_types(
-        log_file: str, known_round_types: list, known_jp_round_types: list, osc_client: SimpleUDPClient
-):
-    round_log: list = []
+def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
+    round_log: list[RoundType] = []
     last_position: int = 0
     last_prediction: bool = False
     bonus_flag: bool = False
@@ -223,10 +231,10 @@ def monitor_round_types(
                         possible_round_type = " ".join(possible_round_type)
                         possible_round_type_for_print = possible_round_type
 
-                        if possible_round_type in known_jp_round_types:
-                            possible_round_type = known_round_types[known_jp_round_types.index(possible_round_type)]
+                        if possible_round_type in jp_round_types:
+                            possible_round_type = round_types[jp_round_types.index(possible_round_type)]
 
-                        if possible_round_type in known_round_types:
+                        if possible_round_type in round_types:
                             update_round_log(round_log, possible_round_type)
                             language_manager.info("logging.new_round_started", possible_round_type_for_print)
 
@@ -268,4 +276,4 @@ if __name__ == "__main__":
     latest_log_file = find_latest_log(log_directory)
 
     if latest_log_file:
-        monitor_round_types(latest_log_file, round_types, jp_round_types, osc_client)
+        monitor_round_types(latest_log_file, osc_client)

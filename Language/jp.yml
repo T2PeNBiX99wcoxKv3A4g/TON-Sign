@@ -10,3 +10,5 @@ logging.new_round_started: "~ 新しいラウンドが始まった！ ~\n~ ラ�
 logging.next_round_should_be: "(最近の試合: %s)\n ~ 次の試合は: %s\n===================\n次の試合を待っている... :3"
 logging.recent_rounds_log_classic: "X"
 logging.recent_rounds_log_special: "O"
+logging.predict_next_round_classic: "クラシック"
+logging.predict_next_round_special: "特殊"
