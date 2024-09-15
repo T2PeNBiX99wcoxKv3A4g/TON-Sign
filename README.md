@@ -2,6 +2,25 @@
 
 ## By \~Emerald~
 
+---
+
+For any one who want to use this fork version  
+Please don't use original exe file, Because the code is still the same.
+
+### Running the App (Fork)
+
+1. **Launch** `TONSign_Classic_or_Special_yky.exe`! if you want to run in japanese, add `-l jp` option or just
+   run `TONSign_Classic_or_Special_yky_JP.lnk`. (I didn't test with other people at all, So I hope the program won't be
+   recognized as a virus.)
+2. **Start some rounds in Terrors of Nowhere.**
+    - The app will handle the rest!
+
+# [Fork Releases](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign/releases/latest)
+
+---
+
+## Original README
+
 **TON-Sign** is a cool lil app I made for the VRChat game _Terrors of Nowhere_. This asset uses OSC to display the next
 round type beside the start button, meaning you should never miss another Alternate round again!
 
@@ -12,7 +31,7 @@ round type beside the start button, meaning you should never miss another Altern
 
 ---
 
-# [Download TON sign from the "Releases" page, or click here!](https://github.com/Emmyvee/TON-Sign/releases/tag/v2.2.1) (NEW JP SUPPORT!)
+# [Download TON sign from the "Releases" page, or click here!](https://github.com/Emmyvee/TON-Sign/releases/latest) (NEW JP SUPPORT!)
 
 ### 🚨 Important Notice 🚨
 
