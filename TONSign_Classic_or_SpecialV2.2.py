@@ -182,7 +182,9 @@ def predict_next_round(round_log: list, bonus_flag: bool):
 
 
 def get_recent_rounds_log(round_log: list):
-    return ", ".join(["C" if round_type == "Classic" else "S" for round_type in round_log])
+    return ", ".join([language_manager.get(
+        "logging.recent_rounds_log_classic") if round_type == "Classic" else language_manager.get(
+        "logging.recent_rounds_log_special") for round_type in round_log])
 
 
 # noinspection PyShadowingNames
@@ -190,7 +192,7 @@ def monitor_round_types(
         log_file: str, known_round_types: list, known_jp_round_types: list, osc_client: SimpleUDPClient
 ):
     round_log: list = []
-    last_position = 0
+    last_position: int = 0
     last_prediction: bool = False
     bonus_flag: bool = False
 

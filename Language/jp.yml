@@ -8,3 +8,5 @@ logging.host_just_left: "*** ホストが去った、次回は特殊ラウンド
 logging.saving_avatar_data: "*** アバターデータを保存し、OSCメッセージを再送する。***"
 logging.new_round_started: "~ 新しいラウンドが始まった！ ~\n~ ラウンドの種類は: %s ~\n"
 logging.next_round_should_be: "(最近の試合: %s)\n ~ 次の試合は: %s\n===================\n次の試合を待っている... :3"
+logging.recent_rounds_log_classic: "X"
+logging.recent_rounds_log_special: "O"
