@@ -2,8 +2,6 @@
 
 ## By \~Emerald~
 
----
-
 For any one who want to use this fork version  
 Please don't use original exe file, Because the code is still the same.
 
@@ -16,8 +14,6 @@ Please don't use original exe file, Because the code is still the same.
     - The app will handle the rest!
 
 # [Fork Releases](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign/releases/latest)
-
----
 
 ## Original README
 
