@@ -2,6 +2,20 @@
 
 ## By \~Emerald~
 
+**TON-Sign** is a cool lil app I made for the VRChat game _Terrors of Nowhere_. This asset uses OSC to display the next
+round type beside the start button, meaning you should never miss another Alternate round again!
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="Screenshot/VRCPreview.jpg" alt="Thanks to the people who helped me test!" width="350"/>
+  <img src="Screenshot/VRCPreview2.jpg" alt="Preview Photo" width="350"/>
+</div>
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="Screenshot/VRCPreview_JP.png" alt="Preview Photo Japanese" width="350"/>
+</div>
+
+---
+
 For any one who want to use this fork version  
 Please don't use original exe file, Because the code is still the same.
 
@@ -16,14 +30,6 @@ Please don't use original exe file, Because the code is still the same.
 # [Fork Releases](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign/releases/latest)
 
 ## Original README
-
-**TON-Sign** is a cool lil app I made for the VRChat game _Terrors of Nowhere_. This asset uses OSC to display the next
-round type beside the start button, meaning you should never miss another Alternate round again!
-
-<div style="display: flex; justify-content: space-around;">
-  <img src="Screenshot/VRCPreview.jpg" alt="Thanks to the people who helped me test!" width="350"/>
-  <img src="Screenshot/VRCPreview2.jpg" alt="Preview Photo" width="350"/>
-</div>
 
 ---
 
