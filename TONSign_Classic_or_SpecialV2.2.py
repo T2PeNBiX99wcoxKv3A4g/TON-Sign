@@ -216,17 +216,14 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
                     if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
                         bonus_flag = True
                         language_manager.info("logging.think_terror_nights")
-
-                    if "OnMasterClientSwitched" in line:
+                    elif "OnMasterClientSwitched" in line:
                         language_manager.info("logging.host_just_left")
                         osc_client.send_message("/avatar/parameters/TON_Sign", True)
                         last_prediction = True
-
-                    if "Saving Avatar Data:" in line:
+                    elif "Saving Avatar Data:" in line:
                         language_manager.info("logging.saving_avatar_data")
                         osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
-
-                    if "Round type is" in line:
+                    elif "Round type is" in line:
                         parts = line.split("Round type is")
                         if len(parts) > 1:
                             possible_round_type = parts[1].strip().split()[0:2]
