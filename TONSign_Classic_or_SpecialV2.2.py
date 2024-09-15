@@ -108,7 +108,7 @@ class LanguageManager(object):
                 lang_id = os.path.basename(file).split('.')[0]
                 self.database[lang_id] = data
                 yml.close()
-        self.language = args.lang
+        self.language = str(args.lang).lower()
 
     def get(self, text: str) -> str:
         if not self.language in self.database or not text in self.database[self.language]:
