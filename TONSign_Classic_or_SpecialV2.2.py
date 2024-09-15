@@ -2,6 +2,7 @@ import argparse
 import glob
 import logging
 import os
+import sys
 import time
 from enum import Enum
 from venv import logger
@@ -205,58 +206,62 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
     bonus_flag: bool = False
 
     while True:
-        with open(log_file, "r", encoding="utf-8") as file:
-            file.seek(last_position)
-            lines = file.readlines()
-            new_position = file.tell()
+        try:
+            with open(log_file, "r", encoding="utf-8") as file:
+                file.seek(last_position)
+                lines = file.readlines()
+                new_position = file.tell()
 
-            for line in lines:
-                if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
-                    bonus_flag = True
-                    language_manager.info("logging.think_terror_nights")
+                for line in lines:
+                    if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
+                        bonus_flag = True
+                        language_manager.info("logging.think_terror_nights")
 
-                if "OnMasterClientSwitched" in line:
-                    language_manager.info("logging.host_just_left")
-                    osc_client.send_message("/avatar/parameters/TON_Sign", True)
-                    last_prediction = True
+                    if "OnMasterClientSwitched" in line:
+                        language_manager.info("logging.host_just_left")
+                        osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                        last_prediction = True
 
-                if "Saving Avatar Data:" in line:
-                    language_manager.info("logging.saving_avatar_data")
-                    osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
+                    if "Saving Avatar Data:" in line:
+                        language_manager.info("logging.saving_avatar_data")
+                        osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
 
-                if "Round type is" in line:
-                    parts = line.split("Round type is")
-                    if len(parts) > 1:
-                        possible_round_type = parts[1].strip().split()[0:2]
-                        possible_round_type = " ".join(possible_round_type)
-                        possible_round_type_for_print = possible_round_type
+                    if "Round type is" in line:
+                        parts = line.split("Round type is")
+                        if len(parts) > 1:
+                            possible_round_type = parts[1].strip().split()[0:2]
+                            possible_round_type = " ".join(possible_round_type)
+                            possible_round_type_for_print = possible_round_type
 
-                        if possible_round_type in jp_round_types:
-                            possible_round_type = round_types[jp_round_types.index(possible_round_type)]
+                            if possible_round_type in jp_round_types:
+                                possible_round_type = round_types[jp_round_types.index(possible_round_type)]
 
-                        if possible_round_type in round_types:
-                            update_round_log(round_log, possible_round_type)
-                            language_manager.info("logging.new_round_started", possible_round_type_for_print)
+                            if possible_round_type in round_types:
+                                update_round_log(round_log, possible_round_type)
+                                language_manager.info("logging.new_round_started", possible_round_type_for_print)
 
-                            prediction = predict_next_round(round_log, bonus_flag)
-                            # special_count = sum(1 for round_type in round_log if round_type == "Special")
-                            recent_rounds_log = get_recent_rounds_log(round_log)
+                                prediction = predict_next_round(round_log, bonus_flag)
+                                # special_count = sum(1 for round_type in round_log if round_type == "Special")
+                                recent_rounds_log = get_recent_rounds_log(round_log)
 
-                            language_manager.info("logging.next_round_should_be", recent_rounds_log, prediction)
+                                language_manager.info("logging.next_round_should_be", recent_rounds_log, prediction)
 
-                            # Send OSC message
-                            if prediction == "Special":
-                                osc_client.send_message("/avatar/parameters/TON_Sign", True)
-                                last_prediction = True
-                            else:
-                                osc_client.send_message("/avatar/parameters/TON_Sign", False)
-                                last_prediction = False
-            last_position = new_position
+                                # Send OSC message
+                                if prediction == "Special":
+                                    osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                                    last_prediction = True
+                                else:
+                                    osc_client.send_message("/avatar/parameters/TON_Sign", False)
+                                    last_prediction = False
+                last_position = new_position
 
-            # Disable the terror nights flag after 6 rounds (assume you have enough data at this point, lol, might still break if it's a new lobby tho sry)
-            if len(round_log) >= 6:
-                bonus_flag = False
-        time.sleep(10)
+                # Disable the terror nights flag after 6 rounds (assume you have enough data at this point, lol, might still break if it's a new lobby tho sry)
+                if len(round_log) >= 6:
+                    bonus_flag = False
+            time.sleep(10)
+        except KeyboardInterrupt:
+            language_manager.info("logging.exit")
+            sys.exit()
 
 
 if __name__ == "__main__":
