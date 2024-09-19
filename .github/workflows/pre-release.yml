@@ -127,8 +127,8 @@ jobs:
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
-#          filename: 'TONSign-Classic-or-Special-yky-windows.zip'
           filename: 'TONSign-Classic-or-Special-yky.zip'
+          #          filename: 'TONSign-Classic-or-Special-yky-windows.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.dist
 
@@ -136,7 +136,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-windows.zip
+          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky.zip
+  #          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-windows.zip
   
   asset-release-build:
     runs-on: ubuntu-latest
@@ -159,7 +160,7 @@ jobs:
   
   pre-release:
     name: "Pre Release"
-#    needs: [ windows-release-build, linux-release-build, macos-release-build, asset-release-build ]
+    #    needs: [ windows-release-build, linux-release-build, macos-release-build, asset-release-build ]
     needs: [ windows-release-build, asset-release-build ]
     runs-on: "ubuntu-latest"
     steps:
@@ -174,7 +175,10 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            release-linux/TONSign-Classic-or-Special-yky-linux.zip
-            release-windows/TONSign-Classic-or-Special-yky-windows.zip
-            release-macos/TONSign-Classic-or-Special-yky-macos.zip
+            release-windows/TONSign-Classic-or-Special-yky.zip
             release-asset/TONSignAsset.zip
+#          files: |
+#            release-linux/TONSign-Classic-or-Special-yky-linux.zip
+#            release-windows/TONSign-Classic-or-Special-yky-windows.zip
+#            release-macos/TONSign-Classic-or-Special-yky-macos.zip
+#            release-asset/TONSignAsset.zip
