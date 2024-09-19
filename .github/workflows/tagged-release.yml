@@ -32,10 +32,11 @@ jobs:
           script-name: TONSign_Classic_or_Special_yky.py
           standalone: true
 
-      - name: Copy Files
-        run: |
-          Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
-          Copy-Item -Path "*.Ink" -Destination "build/TONSign_Classic_or_Special_yky.dist"
+      - name: Copy Language Folder
+        run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
+
+      - name: Copy Link Files
+        run: Copy-Item -Path "*.Ink" -Destination "build/TONSign_Classic_or_Special_yky.dist"
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
