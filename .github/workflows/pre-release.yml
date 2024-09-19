@@ -33,7 +33,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: cp -r Language build
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.build
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -41,7 +41,8 @@ jobs:
           type: 'tar'
           filename: 'TONSign-Classic-or-Special-yky-linux.tar.gz'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build
+          directory: build/TONSign_Classic_or_Special_yky.build
+          custom: --warning=no-file-changed
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -76,7 +77,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: Copy-Item -Path "Language" -Destination "build" -Recurse
+        run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.build" -Recurse
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -84,7 +85,7 @@ jobs:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky-windows.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build
+          directory: build/TONSign_Classic_or_Special_yky.build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -119,7 +120,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: cp -r Language build
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.build
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -127,7 +128,7 @@ jobs:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky-macos.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build
+          directory: build/TONSign_Classic_or_Special_yky.build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -146,7 +147,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'TONSignAsset.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig .github .vscode Exe Language Screenshot .gitignore LICENSE *.md *.txt *.code-workspace *.py'
+          exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py'
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
