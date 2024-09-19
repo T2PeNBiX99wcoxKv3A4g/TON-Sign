@@ -79,18 +79,16 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Generate pre release tag
-        id: generate_pre_release_tag
-        uses: amitsingh-007/next-release-tag@v6.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag_prefix: 'pre-v'
-          tag_template: 'yyyy.mm.dd.i'
+        id: release_tag
+        run: |
+          today=pre-v$(date +'%Y.%m.%d.%H%M%S')
+          echo "::set-output name=release_tag::$today"
 
-      - name: Create Release
+      - name: Create Pre Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ steps.generate_pre_release_tag.outputs.next_release_tag }}
-          tag_name: ${{ steps.generate_pre_release_tag.outputs.next_release_tag }}
+          name: ${{ steps.release_tag.outputs.release_tag }}
+          tag_name: ${{ steps.release_tag.outputs.release_tag }}
           token: ${{secrets.GITHUB_TOKEN}}
           generate_release_notes: true
           make_latest: true
