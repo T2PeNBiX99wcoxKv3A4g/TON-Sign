@@ -93,6 +93,7 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN}}
           generate_release_notes: true
           make_latest: true
+          prerelease: true
           files: |
             release-windows/TONSign-Classic-or-Special-yky.zip
             release-asset/TONSignAsset.zip
