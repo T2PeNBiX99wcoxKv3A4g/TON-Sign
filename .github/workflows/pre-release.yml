@@ -38,8 +38,8 @@ jobs:
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
         with:
-          type: 'tar'
-          filename: 'TONSign-Classic-or-Special-yky-linux.tar.gz'
+          type: 'zip'
+          filename: 'TONSign-Classic-or-Special-yky-linux.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.build
           custom: --warning=no-file-changed
@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-linux
-          path: build/TONSign-Classic-or-Special-yky-linux.tar.gz
+          path: build/TONSign-Classic-or-Special-yky-linux.zip
   
   windows-release-build:
     runs-on: windows-latest
@@ -171,7 +171,7 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            release-linux/TONSign-Classic-or-Special-yky-linux.tar.gz
+            release-linux/TONSign-Classic-or-Special-yky-linux.zip
             release-windows/TONSign-Classic-or-Special-yky-windows.zip
             release-macos/TONSign-Classic-or-Special-yky-macos.zip
             release-asset/TONSignAsset.zip
