@@ -82,7 +82,7 @@ jobs:
         id: release_tag
         run: |
           today=pre-v$(date +'%Y.%m.%d.%H%M%S')
-          echo "::set-output name=release_tag::$today"
+          echo "release_tag=$today" >> $GITHUB_OUTPUT
 
       - name: Create Pre Release
         uses: softprops/action-gh-release@v2
