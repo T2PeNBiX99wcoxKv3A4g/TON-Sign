@@ -63,7 +63,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'TONSignAsset.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py'
+          exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py *.lnk'
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
