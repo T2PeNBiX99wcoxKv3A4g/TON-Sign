@@ -33,7 +33,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: cp -r Language build/TONSign_Classic_or_Special_yky.build
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -41,13 +41,13 @@ jobs:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky-linux.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build/TONSign_Classic_or_Special_yky.build
+          directory: build/TONSign_Classic_or_Special_yky.dist
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-linux
-          path: build/TONSign_Classic_or_Special_yky.build/TONSign-Classic-or-Special-yky-linux.zip
+          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-linux.zip
   
   windows-release-build:
     runs-on: windows-latest
@@ -76,7 +76,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.build" -Recurse
+        run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -84,13 +84,13 @@ jobs:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky-windows.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build/TONSign_Classic_or_Special_yky.build
+          directory: build/TONSign_Classic_or_Special_yky.dist
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: build/TONSign_Classic_or_Special_yky.build/TONSign-Classic-or-Special-yky-windows.zip
+          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-windows.zip
   
   macos-release-build:
     runs-on: macos-13
@@ -119,7 +119,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: cp -r Language build/TONSign_Classic_or_Special_yky.build
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -127,13 +127,13 @@ jobs:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky-macos.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
-          directory: build/TONSign_Classic_or_Special_yky.build
+          directory: build/TONSign_Classic_or_Special_yky.dist
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-macos
-          path: build/TONSign_Classic_or_Special_yky.build/TONSign-Classic-or-Special-yky-macos.zip
+          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-macos.zip
   
   asset-release-build:
     runs-on: ubuntu-latest
