@@ -42,7 +42,6 @@ jobs:
           filename: 'TONSign-Classic-or-Special-yky-linux.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.build
-          custom: --warning=no-file-changed
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
