@@ -92,7 +92,6 @@ jobs:
           tag_name: ${{ steps.release_tag.outputs.release_tag }}
           token: ${{secrets.GITHUB_TOKEN}}
           generate_release_notes: true
-          make_latest: true
           prerelease: true
           files: |
             release-windows/TONSign-Classic-or-Special-yky.zip
