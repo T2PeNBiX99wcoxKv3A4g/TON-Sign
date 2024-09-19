@@ -1,97 +1,11 @@
-name: "pre-release"
+name: Pre Release
 
 on:
   push:
     branches:
-      - "main"
+      - main
 
 jobs:
-  #  linux-release-build:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Check-out repository
-  #        uses: actions/checkout@v4
-  #
-  #      - name: Setup Python
-  #        uses: actions/setup-python@v5
-  #        with:
-  #          python-version: '3.12.6'
-  #          cache: 'pip'
-  #
-  #      - name: Install Dependencies
-  #        run: pip install -r requirements.txt
-  #
-  #      - name: Run Test
-  #        run: python TONSign_Classic_or_Special_yky.py
-  #      
-  #      # Build python script into a stand-alone exe
-  #      - name: Build Executable
-  #        uses: Nuitka/Nuitka-Action@main
-  #        with:
-  #          nuitka-version: main
-  #          script-name: TONSign_Classic_or_Special_yky.py
-  #          standalone: true
-  #
-  #      - name: Copy Files
-  #        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
-  #
-  #      - name: Create Archive
-  #        uses: thedoctor0/zip-release@0.7.6
-  #        with:
-  #          type: 'zip'
-  #          filename: 'TONSign-Classic-or-Special-yky-linux.zip'
-  #          exclusions: '*.git* /*node_modules/* .editorconfig'
-  #          directory: build/TONSign_Classic_or_Special_yky.dist
-  #
-  #      - name: Upload build artifact
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: release-linux
-  #          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-linux.zip
-  
-  #  macos-release-build:
-  #    runs-on: macos-13
-  #    steps:
-  #      - name: Check-out repository
-  #        uses: actions/checkout@v4
-  #
-  #      - name: Setup Python
-  #        uses: actions/setup-python@v5
-  #        with:
-  #          python-version: '3.12.6'
-  #          cache: 'pip'
-  #
-  #      - name: Install Dependencies
-  #        run: pip install -r requirements.txt
-  #
-  #      - name: Run Test
-  #        run: python TONSign_Classic_or_Special_yky.py
-  #
-  #      # Build python script into a stand-alone exe
-  #      - name: Build Executable
-  #        uses: Nuitka/Nuitka-Action@main
-  #        with:
-  #          nuitka-version: main
-  #          script-name: TONSign_Classic_or_Special_yky.py
-  #          standalone: true
-  #
-  #      - name: Copy Files
-  #        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
-  #
-  #      - name: Create Archive
-  #        uses: thedoctor0/zip-release@0.7.6
-  #        with:
-  #          type: 'zip'
-  #          filename: 'TONSign-Classic-or-Special-yky-macos.zip'
-  #          exclusions: '*.git* /*node_modules/* .editorconfig'
-  #          directory: build/TONSign_Classic_or_Special_yky.dist
-  #
-  #      - name: Upload build artifact
-  #        uses: actions/upload-artifact@v4
-  #        with:
-  #          name: release-macos
-  #          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-macos.zip
-  
   windows-release-build:
     runs-on: windows-latest
     steps:
@@ -109,7 +23,7 @@ jobs:
 
       - name: Run Test
         run: python TONSign_Classic_or_Special_yky.py
-      
+
       # Build python script into a stand-alone exe
       - name: Build Executable
         uses: Nuitka/Nuitka-Action@main
@@ -118,31 +32,30 @@ jobs:
           script-name: TONSign_Classic_or_Special_yky.py
           standalone: true
 
-      - name: Copy Files
-        run: |
-          Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
-          Copy-Item -Path "*.Ink" -Destination "build/TONSign_Classic_or_Special_yky.dist"
+      - name: Copy Language Folder
+        run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
+
+      - name: Copy Link Files
+        run: Copy-Item -Path "*.lnk" -Destination "build/TONSign_Classic_or_Special_yky.dist"
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
           filename: 'TONSign-Classic-or-Special-yky.zip'
-          #          filename: 'TONSign-Classic-or-Special-yky-windows.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.dist
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
           path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky.zip
-  #          path: build/TONSign_Classic_or_Special_yky.dist/TONSign-Classic-or-Special-yky-windows.zip
-  
+
   asset-release-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out repository
+      - name: Check-out Repository
         uses: actions/checkout@v4
 
       - name: Create Archive
@@ -150,35 +63,51 @@ jobs:
         with:
           type: 'zip'
           filename: 'TONSignAsset.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py'
+          exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py *.lnk'
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-asset
           path: TONSignAsset.zip
   
-  pre-release:
-    name: "Pre Release"
-    #    needs: [ windows-release-build, linux-release-build, macos-release-build, asset-release-build ]
+  deploy:
     needs: [ windows-release-build, asset-release-build ]
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
-      - name: Download build artifacts
+      - name: Download Build Artifacts
         uses: actions/download-artifact@v4
 
-      - name: Create Release
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Generate Pre Release Tag
+        id: release_tag
+        run: |
+          today=pre-v$(date +'%Y.%m.%d.%H%M%S')
+          echo "release_tag=$today" >> $GITHUB_OUTPUT
+      
+      #      - name: Create Pre Release
+      #        uses: softprops/action-gh-release@v2
+      #        with:
+      #          name: Pre Release ${{ steps.release_tag.outputs.release_tag }}
+      #          tag_name: ${{ steps.release_tag.outputs.release_tag }}
+      #          token: ${{secrets.GITHUB_TOKEN}}
+      #          generate_release_notes: true
+      #          prerelease: true
+      #          files: |
+      #            release-windows/TONSign-Classic-or-Special-yky.zip
+      #            release-asset/TONSignAsset.zip
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            release-windows/TONSign-Classic-or-Special-yky.zip
-            release-asset/TONSignAsset.zip
-#          files: |
-#            release-linux/TONSign-Classic-or-Special-yky-linux.zip
-#            release-windows/TONSign-Classic-or-Special-yky-windows.zip
-#            release-macos/TONSign-Classic-or-Special-yky-macos.zip
-#            release-asset/TONSignAsset.zip
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pre Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release-windows/TONSign-Classic-or-Special-yky.zip,release-asset/TONSignAsset.zip"
+          #          bodyFile: "body.md"
+          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
+          name: Pre Release ${{ steps.release_tag.outputs.release_tag }}
+          tag: ${{ steps.release_tag.outputs.release_tag }}
+          generateReleaseNotes: true
