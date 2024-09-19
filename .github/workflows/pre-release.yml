@@ -86,7 +86,6 @@ jobs:
 
       - name: Create Pre Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           name: ${{ steps.release_tag.outputs.release_tag }}
           tag_name: ${{ steps.release_tag.outputs.release_tag }}
