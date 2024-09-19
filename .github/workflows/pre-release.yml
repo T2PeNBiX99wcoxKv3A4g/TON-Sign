@@ -33,9 +33,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: |
-          cp -r Language build/TONSign_Classic_or_Special_yky.dist
-          cp *.ink build/TONSign_Classic_or_Special_yky.dist
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -80,7 +78,7 @@ jobs:
       - name: Copy Files
         run: |
           Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
-          Copy-Item -Path "*.ink" -Destination "build/TONSign_Classic_or_Special_yky.dist"
+          Copy-Item -Path "*.Ink" -Destination "build/TONSign_Classic_or_Special_yky.dist"
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
@@ -123,9 +121,7 @@ jobs:
           standalone: true
 
       - name: Copy Files
-        run: |
-          cp -r Language build/TONSign_Classic_or_Special_yky.dist
-          cp *.ink build/TONSign_Classic_or_Special_yky.dist
+        run: cp -r Language build/TONSign_Classic_or_Special_yky.dist
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.7.6
