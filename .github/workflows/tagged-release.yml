@@ -9,7 +9,7 @@ jobs:
   windows-release-build:
     runs-on: windows-latest
     steps:
-      - name: Check-out repository
+      - name: Check-out Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -46,7 +46,7 @@ jobs:
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.dist
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
@@ -55,7 +55,7 @@ jobs:
   asset-release-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out repository
+      - name: Check-out Repository
         uses: actions/checkout@v4
 
       - name: Create Archive
@@ -65,7 +65,7 @@ jobs:
           filename: 'TONSignAsset.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py'
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-asset
@@ -79,7 +79,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
 
-      - name: Upload files
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:

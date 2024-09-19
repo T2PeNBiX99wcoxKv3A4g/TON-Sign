@@ -46,7 +46,7 @@ jobs:
           exclusions: '*.git* /*node_modules/* .editorconfig'
           directory: build/TONSign_Classic_or_Special_yky.dist
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
@@ -55,7 +55,7 @@ jobs:
   asset-release-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out repository
+      - name: Check-out Repository
         uses: actions/checkout@v4
 
       - name: Create Archive
@@ -65,7 +65,7 @@ jobs:
           filename: 'TONSignAsset.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig *.idea* *.github* *.vscode* /*Exe/* /*Language/* /*Screenshot/* .gitignore LICENSE *.md *.txt *.code-workspace *.py'
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-asset
@@ -75,10 +75,10 @@ jobs:
     needs: [ windows-release-build, asset-release-build ]
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifacts
+      - name: Download Build Artifacts
         uses: actions/download-artifact@v4
 
-      - name: Generate pre release tag
+      - name: Generate Pre Release Tag
         id: release_tag
         run: |
           today=pre-v$(date +'%Y.%m.%d.%H%M%S')
@@ -86,6 +86,7 @@ jobs:
 
       - name: Create Pre Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           name: ${{ steps.release_tag.outputs.release_tag }}
           tag_name: ${{ steps.release_tag.outputs.release_tag }}
