@@ -91,7 +91,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "release-windows/TONSign-Classic-or-Special-yky.zip,release-asset/TONSignAsset.zip"
-          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
