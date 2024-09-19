@@ -137,11 +137,11 @@ language_manager: LanguageManager
 def find_latest_log(directory: str) -> str | None:
     log_files = glob.glob(os.path.join(directory, "*.txt"))
     if not log_files:
-        language_manager.error("logging.no_log_file")
+        language_manager.error("log.no_log_file")
         return None
 
     latest_log = max(log_files, key=os.path.getmtime)
-    language_manager.info("logging.current_log_running", latest_log)
+    language_manager.info("log.current_log_running", latest_log)
     return latest_log
 
 
@@ -183,7 +183,7 @@ def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundTyp
         return RoundType.Classic
 
     if round_log[-2:] == [RoundType.Special, RoundType.Special]:
-        language_manager.info("logging.host_left_before")
+        language_manager.info("log.host_left_before")
         round_log.pop()
 
     if is_alternate_pattern(round_log, bonus_flag):
@@ -194,8 +194,8 @@ def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundTyp
 
 def get_recent_rounds_log(round_log: list[RoundType]) -> str:
     return ", ".join([language_manager.get(
-        "logging.recent_rounds_log_classic") if round_type == RoundType.Classic else language_manager.get(
-        "logging.recent_rounds_log_special") for round_type in round_log])
+        "log.recent_rounds_log_classic") if round_type == RoundType.Classic else language_manager.get(
+        "log.recent_rounds_log_special") for round_type in round_log])
 
 
 # noinspection PyShadowingNames
@@ -215,14 +215,14 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
                 for line in lines:
                     if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
                         bonus_flag = True
-                        language_manager.info("logging.think_terror_nights")
+                        language_manager.info("log.think_terror_nights")
                     elif "OnMasterClientSwitched" in line:
-                        language_manager.info("logging.host_just_left")
+                        language_manager.info("log.host_just_left")
                         osc_client.send_message("/avatar/parameters/TON_Sign", True)
                         language_manager.dbg("OnMasterClientSwitched: /avatar/parameters/TON_Sign %s", True)
                         last_prediction = True
                     elif "Saving Avatar Data:" in line:
-                        language_manager.info("logging.saving_avatar_data")
+                        language_manager.info("log.saving_avatar_data")
                         osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
                         language_manager.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
                     elif "Round type is" in line:
@@ -237,15 +237,15 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
 
                             if possible_round_type in round_types:
                                 update_round_log(round_log, possible_round_type)
-                                language_manager.info("logging.new_round_started", possible_round_type_for_print)
+                                language_manager.info("log.new_round_started", possible_round_type_for_print)
 
-                                classic = language_manager.get("logging.predict_next_round_classic")
-                                special = language_manager.get("logging.predict_next_round_special")
+                                classic = language_manager.get("log.predict_next_round_classic")
+                                special = language_manager.get("log.predict_next_round_special")
                                 prediction = predict_next_round(round_log, bonus_flag)
                                 # special_count = sum(1 for round_type in round_log if round_type == "Special")
                                 recent_rounds_log = get_recent_rounds_log(round_log)
 
-                                language_manager.info("logging.next_round_should_be", recent_rounds_log,
+                                language_manager.info("log.next_round_should_be", recent_rounds_log,
                                                       special if prediction == RoundType.Special else classic)
 
                                 # Send OSC message
@@ -264,7 +264,7 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
                     bonus_flag = False
             time.sleep(10)
         except KeyboardInterrupt:
-            language_manager.info("logging.exit")
+            language_manager.info("log.exit")
             sys.exit()
 
 
