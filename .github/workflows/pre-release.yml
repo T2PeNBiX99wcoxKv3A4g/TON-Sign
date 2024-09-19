@@ -83,14 +83,24 @@ jobs:
         run: |
           today=pre-v$(date +'%Y.%m.%d.%H%M%S')
           echo "release_tag=$today" >> $GITHUB_OUTPUT
-
+      
+      #      - name: Create Pre Release
+      #        uses: softprops/action-gh-release@v2
+      #        with:
+      #          name: ${{ steps.release_tag.outputs.release_tag }}
+      #          tag_name: ${{ steps.release_tag.outputs.release_tag }}
+      #          token: ${{secrets.GITHUB_TOKEN}}
+      #          generate_release_notes: true
+      #          prerelease: true
+      #          files: |
+      #            release-windows/TONSign-Classic-or-Special-yky.zip
+      #            release-asset/TONSignAsset.zip
+      
       - name: Create Pre Release
-        uses: softprops/action-gh-release@v2
+        uses: ratrocket/action-automatic-releases@latest
         with:
-          name: ${{ steps.release_tag.outputs.release_tag }}
-          tag_name: ${{ steps.release_tag.outputs.release_tag }}
-          token: ${{secrets.GITHUB_TOKEN}}
-          generate_release_notes: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ steps.release_tag.outputs.release_tag }}
           prerelease: true
           files: |
             release-windows/TONSign-Classic-or-Special-yky.zip
