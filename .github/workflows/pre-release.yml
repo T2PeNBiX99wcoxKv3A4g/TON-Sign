@@ -10,23 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check-out repository
-      - uses: actions/checkout@latest
+        uses: actions/checkout@latest
 
       - name: Setup Python
-      - uses: actions/setup-python@latest
+        uses: actions/setup-python@latest
         with:
           python-version: '3.12.6'
           cache: 'pip'
 
       - name: Install Dependencies
-      - run: pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run Test
-      - run: python TONSign_Classic_or_Special_yky.py
+        run: python TONSign_Classic_or_Special_yky.py
       
       # Build python script into a stand-alone exe
       - name: Build Executable
-      - uses: Nuitka/Nuitka-Action@latest
+        uses: Nuitka/Nuitka-Action@latest
         with:
           nuitka-version: main
           script-name: TONSign_Classic_or_Special_yky.py
@@ -53,23 +53,23 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check-out repository
-      - uses: actions/checkout@latest
+        uses: actions/checkout@latest
 
       - name: Setup Python
-      - uses: actions/setup-python@latest
+        uses: actions/setup-python@latest
         with:
           python-version: '3.12.6'
           cache: 'pip'
 
       - name: Install Dependencies
-      - run: pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run Test
-      - run: python TONSign_Classic_or_Special_yky.py
+        run: python TONSign_Classic_or_Special_yky.py
       
       # Build python script into a stand-alone exe
       - name: Build Executable
-      - uses: Nuitka/Nuitka-Action@latest
+        uses: Nuitka/Nuitka-Action@latest
         with:
           nuitka-version: main
           script-name: TONSign_Classic_or_Special_yky.py
@@ -96,23 +96,23 @@ jobs:
     runs-on: macos-13
     steps:
       - name: Check-out repository
-      - uses: actions/checkout@latest
+        uses: actions/checkout@latest
 
       - name: Setup Python
-      - uses: actions/setup-python@latest
+        uses: actions/setup-python@latest
         with:
           python-version: '3.12.6'
           cache: 'pip'
 
       - name: Install Dependencies
-      - run: pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run Test
-      - run: python TONSign_Classic_or_Special_yky.py
+        run: python TONSign_Classic_or_Special_yky.py
 
       # Build python script into a stand-alone exe
       - name: Build Executable
-      - uses: Nuitka/Nuitka-Action@latest
+        uses: Nuitka/Nuitka-Action@latest
         with:
           nuitka-version: main
           script-name: TONSign_Classic_or_Special_yky.py
@@ -139,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check-out repository
-      - uses: actions/checkout@latest
+        uses: actions/checkout@latest
 
       - name: Create Archive
         uses: thedoctor0/zip-release@latest
@@ -147,7 +147,7 @@ jobs:
           type: 'zip'
           filename: 'TONSignAsset.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig .github .vscode Exe Language Screenshot .gitignore LICENSE *.md *.txt *.code-workspace *.py'
-          
+
       - name: Upload build artifact
         uses: actions/upload-artifact@latest
         with:
@@ -163,7 +163,7 @@ jobs:
         uses: actions/download-artifact@latest
 
       - name: Create Release
-      - uses: marvinpinto/action-automatic-releases@latest
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
