@@ -87,7 +87,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pre_release_branches: "pre"
+          pre_release_branches: "pre*"
           default_prerelease_bump: "preminor"
           default_bump: "minor"
 
