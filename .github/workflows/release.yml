@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - pre
+      - fast
 
 jobs:
   windows-release-build:
@@ -87,10 +87,10 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          pre_release_branches: "pre"
+          pre_release_branches: "fast"
           default_prerelease_bump: "preminor"
           default_bump: "minor"
-          append_to_pre_release_tag: "pre"
+#          append_to_pre_release_tag: "pre"
 
       - name: Create Release
         uses: ncipollo/release-action@v1
