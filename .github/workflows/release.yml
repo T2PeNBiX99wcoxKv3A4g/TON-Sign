@@ -88,9 +88,9 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pre_release_branches: "fast"
-          default_prerelease_bump: "preminor"
-          default_bump: "minor"
-          append_to_pre_release_tag: "fast"
+#          default_prerelease_bump: "preminor"
+#          default_bump: "minor"
+#          append_to_pre_release_tag: "fast"
 
       - name: Create Release
         uses: ncipollo/release-action@v1
