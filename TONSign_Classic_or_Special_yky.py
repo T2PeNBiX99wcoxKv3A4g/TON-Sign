@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import time
+import traceback
 from enum import Enum
 from venv import logger
 
@@ -333,34 +334,38 @@ if __name__ == "__main__":
     args = parser.parse_args()
     lm: LanguageManager = LanguageManager(args)
     # load_save()
-    running_time: int = 0
 
-    try:
-        # OSC setup
-        ip = "127.0.0.1"
-        port = 9000
-        osc_client = SimpleUDPClient(ip, port)
+    while True:
+        # noinspection PyBroadException
+        try:
+            # OSC setup
+            ip = "127.0.0.1"
+            port = 9000
+            osc_client = SimpleUDPClient(ip, port)
+            running_time: int = 0
 
-        if args.test:
-            run_test()
-            sys.exit()
+            if args.test:
+                run_test()
+                sys.exit()
 
-        while True:
-            check_vrchat_loop()
-            
-            if running_time > 0:
-                lm.info("log.wait_until_join_game")
-                time.sleep(60)
+            while True:
+                check_vrchat_loop()
 
-            # Directory and file search UPDATED becuase some people's getlogin function EXPLODED so we're doing it this way now :3
-            log_directory = os.path.join(os.path.expanduser("~"), "AppData", "LocalLow", "VRChat", "VRChat")
-            latest_log_file = find_latest_log(log_directory)
+                if running_time > 0:
+                    lm.info("log.wait_until_join_game")
+                    time.sleep(60)
 
-            if latest_log_file:
-                monitor_round_types(latest_log_file, osc_client)
-                running_time += 1
-            else:
-                break
-    except KeyboardInterrupt:
-        lm.info("log.exit")
-        exit_do()
+                # Directory and file search UPDATED becuase some people's getlogin function EXPLODED so we're doing it this way now :3
+                log_directory = os.path.join(os.path.expanduser("~"), "AppData", "LocalLow", "VRChat", "VRChat")
+                latest_log_file = find_latest_log(log_directory)
+
+                if latest_log_file:
+                    monitor_round_types(latest_log_file, osc_client)
+                    running_time += 1
+                else:
+                    break
+        except KeyboardInterrupt:
+            lm.info("log.exit")
+            exit_do()
+        except Exception:
+            lm.error(traceback.format_exc())
