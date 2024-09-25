@@ -7,11 +7,16 @@ import time
 from enum import Enum
 from venv import logger
 
+import pygetwindow as gw
 import yaml
 from pythonosc.udp_client import SimpleUDPClient
 
+save_data: dict = {
+    "last_log_file": ""
+}
+
 # Current round types in game
-round_types = [
+round_types: list = [
     "Classic",
     "Fog",
     "Punished",
@@ -27,7 +32,7 @@ round_types = [
     "Blood Moon",
 ]
 
-jp_round_types = [
+jp_round_types: list = [
     "クラシック",
     "霧",
     "パニッシュ",
@@ -112,36 +117,38 @@ class LanguageManager(object):
 
     def get(self, text: str) -> str:
         if not self.language in self.database or not text in self.database[self.language]:
+            if "en" in self.database and text in self.database["en"]:
+                return self.database["en"][text]
             return text
         return self.database[self.language][text]
 
-    def info(self, msg: str, *args: object):
+    def info(self, msg: str, *args: object) -> None:
         logger.info(self.get(msg), *args)
 
-    def warning(self, msg: str, *args: object):
+    def warning(self, msg: str, *args: object) -> None:
         logger.warning(self.get(msg), *args)
 
-    def error(self, msg: str, *args: object):
+    def error(self, msg: str, *args: object) -> None:
         logger.error(self.get(msg), *args)
 
-    def debug(self, msg: str, *args: object):
+    def debug(self, msg: str, *args: object) -> None:
         logger.debug(self.get(msg), *args)
 
-    def dbg(self, msg: str, *args: object):
+    def dbg(self, msg: str, *args: object) -> None:
         self.debug(msg, *args)
 
 
-language_manager: LanguageManager
+lm: LanguageManager
 
 
 def find_latest_log(directory: str) -> str | None:
     log_files = glob.glob(os.path.join(directory, "*.txt"))
     if not log_files:
-        language_manager.error("log.no_log_file")
+        lm.error("log.no_log_file")
         return None
 
     latest_log = max(log_files, key=os.path.getmtime)
-    language_manager.info("log.current_log_running", latest_log)
+    lm.info("log.current_log_running", latest_log)
     return latest_log
 
 
@@ -155,7 +162,7 @@ def classify_round(round_type: str) -> RoundType:
     return RoundType.NIL
 
 
-def update_round_log(round_log: list[RoundType], round_type: str):
+def update_round_log(round_log: list[RoundType], round_type: str) -> None:
     classification: RoundType = classify_round(round_type)
 
     if classification == RoundType.Exempt:
@@ -183,7 +190,7 @@ def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundTyp
         return RoundType.Classic
 
     if round_log[-2:] == [RoundType.Special, RoundType.Special]:
-        language_manager.info("log.host_left_before")
+        lm.info("log.host_left_before")
         round_log.pop()
 
     if is_alternate_pattern(round_log, bonus_flag):
@@ -193,96 +200,167 @@ def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundTyp
 
 
 def get_recent_rounds_log(round_log: list[RoundType]) -> str:
-    return ", ".join([language_manager.get(
-        "log.recent_rounds_log_classic") if round_type == RoundType.Classic else language_manager.get(
+    return ", ".join([lm.get(
+        "log.recent_rounds_log_classic") if round_type == RoundType.Classic else lm.get(
         "log.recent_rounds_log_special") for round_type in round_log])
 
 
+def check_vrchat_is_running() -> bool:
+    return "VRChat" in gw.getAllTitles()
+
+
+def check_vrchat_loop() -> None:
+    temp: int = 0
+    while True:
+        if temp < 1:
+            lm.info("log.waiting_vrchat")
+
+        check = check_vrchat_is_running()
+        lm.dbg(f"Check: {check}")
+
+        if check:
+            lm.info("log.vrchat_found")
+            break
+
+        temp += 1
+        time.sleep(2)
+
+
 # noinspection PyShadowingNames
-def monitor_round_types(log_file: str, osc_client: SimpleUDPClient):
+def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
     round_log: list[RoundType] = []
     last_position: int = 0
     last_prediction: bool = False
     bonus_flag: bool = False
 
     while True:
-        try:
-            with open(log_file, "r", encoding="utf-8") as file:
-                file.seek(last_position)
-                lines = file.readlines()
-                new_position = file.tell()
+        if not check_vrchat_is_running():
+            lm.info("log.vrchat_not_find")
+            break
+        with open(log_file, "r", encoding="utf-8") as file:
+            file.seek(last_position)
+            lines = file.readlines()
+            new_position = file.tell()
 
-                for line in lines:
-                    if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
-                        bonus_flag = True
-                        language_manager.info("log.think_terror_nights")
-                    elif "OnMasterClientSwitched" in line:
-                        language_manager.info("log.host_just_left")
-                        osc_client.send_message("/avatar/parameters/TON_Sign", True)
-                        language_manager.dbg("OnMasterClientSwitched: /avatar/parameters/TON_Sign %s", True)
-                        last_prediction = True
-                    elif "Saving Avatar Data:" in line:
-                        language_manager.info("log.saving_avatar_data")
-                        osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
-                        language_manager.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
-                    elif "Round type is" in line:
-                        parts = line.split("Round type is")
-                        if len(parts) > 1:
-                            possible_round_type = parts[1].strip().split()[0:2]
-                            possible_round_type = " ".join(possible_round_type)
-                            possible_round_type_for_print = possible_round_type
+            for line in lines:
+                if "BONUS ACTIVE!" in line:  # TERROR NIGHTS STRING
+                    bonus_flag = True
+                    lm.info("log.think_terror_nights")
+                elif "OnMasterClientSwitched" in line:
+                    lm.info("log.host_just_left")
+                    osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                    lm.dbg("OnMasterClientSwitched: /avatar/parameters/TON_Sign %s", True)
+                    last_prediction = True
+                elif "Saving Avatar Data:" in line:
+                    lm.info("log.saving_avatar_data")
+                    osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
+                    lm.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
+                elif "Round type is" in line:
+                    parts = line.split("Round type is")
+                    if len(parts) > 1:
+                        possible_round_type = parts[1].strip().split()[0:2]
+                        possible_round_type = " ".join(possible_round_type)
+                        possible_round_type_for_print = possible_round_type
 
-                            if possible_round_type in jp_round_types:
-                                possible_round_type = round_types[jp_round_types.index(possible_round_type)]
+                        if possible_round_type in jp_round_types:
+                            possible_round_type = round_types[jp_round_types.index(possible_round_type)]
 
-                            if possible_round_type in round_types:
-                                update_round_log(round_log, possible_round_type)
-                                language_manager.info("log.new_round_started", possible_round_type_for_print)
+                        if possible_round_type in round_types:
+                            update_round_log(round_log, possible_round_type)
+                            lm.info("log.new_round_started", possible_round_type_for_print)
 
-                                classic = language_manager.get("log.predict_next_round_classic")
-                                special = language_manager.get("log.predict_next_round_special")
-                                prediction = predict_next_round(round_log, bonus_flag)
-                                # special_count = sum(1 for round_type in round_log if round_type == "Special")
-                                recent_rounds_log = get_recent_rounds_log(round_log)
+                            classic = lm.get("log.predict_next_round_classic")
+                            special = lm.get("log.predict_next_round_special")
+                            prediction = predict_next_round(round_log, bonus_flag)
+                            # special_count = sum(1 for round_type in round_log if round_type == "Special")
+                            recent_rounds_log = get_recent_rounds_log(round_log)
 
-                                language_manager.info("log.next_round_should_be", recent_rounds_log,
-                                                      special if prediction == RoundType.Special else classic)
+                            lm.info("log.next_round_should_be", recent_rounds_log,
+                                    special if prediction == RoundType.Special else classic)
 
-                                # Send OSC message
-                                if prediction == RoundType.Special:
-                                    osc_client.send_message("/avatar/parameters/TON_Sign", True)
-                                    language_manager.dbg("Round type is: /avatar/parameters/TON_Sign %s", True)
-                                    last_prediction = True
-                                else:
-                                    osc_client.send_message("/avatar/parameters/TON_Sign", False)
-                                    language_manager.dbg("Round type is: /avatar/parameters/TON_Sign %s", False)
-                                    last_prediction = False
-                last_position = new_position
+                            # Send OSC message
+                            if prediction == RoundType.Special:
+                                osc_client.send_message("/avatar/parameters/TON_Sign", True)
+                                lm.dbg("Round type is: /avatar/parameters/TON_Sign %s", True)
+                                last_prediction = True
+                            else:
+                                osc_client.send_message("/avatar/parameters/TON_Sign", False)
+                                lm.dbg("Round type is: /avatar/parameters/TON_Sign %s", False)
+                                last_prediction = False
+            last_position = new_position
 
-                # Disable the terror nights flag after 6 rounds (assume you have enough data at this point, lol, might still break if it's a new lobby tho sry)
-                if len(round_log) >= 6:
-                    bonus_flag = False
-            time.sleep(10)
-        except KeyboardInterrupt:
-            language_manager.info("log.exit")
-            sys.exit()
+            # Disable the terror nights flag after 6 rounds (assume you have enough data at this point, lol, might still break if it's a new lobby tho sry)
+            if len(round_log) >= 6:
+                bonus_flag = False
+        time.sleep(10)
+
+
+def run_test():
+    lm.info("log.test")
+
+
+def exit_do():
+    # dir_path = os.path.dirname(os.path.realpath(__file__))
+    # 
+    # with open(os.path.join(dir_path, "save.yml"), "w", encoding="utf-8") as save_file:
+    #     yaml.dump(save_data, save_file, default_flow_style=False)
+    lm.dbg("Exit!")
+    sys.exit()
+
+
+def load_save():
+    global save_data
+    try:
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        with open(os.path.join(dir_path, "save.yml"), "r", encoding="utf-8") as save_file:
+            load_data: dict = yaml.safe_load(save_file)
+            lm.dbg(f"Data: {load_data}, last_log_file: {load_data["last_log_file"]}")
+
+            for data_key in save_data.keys():
+                if not data_key in load_data:
+                    continue
+                save_data[data_key] = load_data[data_key]
+    except FileNotFoundError:
+        pass
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', '-l', default="en", help="Select the Language.", type=str)
     parser.add_argument('--debug', help="Debug mode.", action="store_true")
+    parser.add_argument('--test', help="Test mode. (For workflows)", action="store_true")
     args = parser.parse_args()
-    language_manager = LanguageManager(args)
+    lm: LanguageManager = LanguageManager(args)
+    # load_save()
+    running_time: int = 0
 
-    # OSC setup
-    ip = "127.0.0.1"
-    port = 9000
-    osc_client = SimpleUDPClient(ip, port)
+    try:
+        # OSC setup
+        ip = "127.0.0.1"
+        port = 9000
+        osc_client = SimpleUDPClient(ip, port)
 
-    # Directory and file search UPDATED becuase some people's getlogin function EXPLODED so we're doing it this way now :3
-    log_directory = os.path.join(os.path.expanduser("~"), "AppData", "LocalLow", "VRChat", "VRChat")
-    latest_log_file = find_latest_log(log_directory)
+        if args.test:
+            run_test()
+            sys.exit()
 
-    if latest_log_file:
-        monitor_round_types(latest_log_file, osc_client)
+        while True:
+            check_vrchat_loop()
+            
+            if running_time > 0:
+                lm.info("log.wait_until_join_game")
+                time.sleep(60)
+
+            # Directory and file search UPDATED becuase some people's getlogin function EXPLODED so we're doing it this way now :3
+            log_directory = os.path.join(os.path.expanduser("~"), "AppData", "LocalLow", "VRChat", "VRChat")
+            latest_log_file = find_latest_log(log_directory)
+
+            if latest_log_file:
+                monitor_round_types(latest_log_file, osc_client)
+                running_time += 1
+            else:
+                break
+    except KeyboardInterrupt:
+        lm.info("log.exit")
+        exit_do()
