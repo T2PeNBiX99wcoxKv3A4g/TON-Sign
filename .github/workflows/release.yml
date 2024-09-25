@@ -23,7 +23,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Test
-        run: python TONSign_Classic_or_Special_yky.py
+        run: python TONSign_Classic_or_Special_yky.py --test
 
       # Build python script into a stand-alone exe
       - name: Build Executable
