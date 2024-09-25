@@ -49,9 +49,27 @@ jp_round_types: list = [
     "ブラッドバス",
 ]
 
-exempt_rounds = {"Mystic Moon", "Twilight", "Solstice"}
-special_rounds = {"Fog", "Punished", "Sabotage", "Cracked", "Alternate", "Bloodbath", "Midnight", "8 Pages"}
-classic_rounds = {"Classic", "Blood Moon"}
+exempt_rounds: list = [
+    "Mystic Moon",
+    "Twilight",
+    "Solstice"
+]
+
+special_rounds: list = [
+    "Fog",
+    "Punished",
+    "Sabotage",
+    "Cracked",
+    "Alternate",
+    "Bloodbath",
+    "Midnight",
+    "8 Pages"
+]
+
+classic_rounds: list = [
+    "Classic",
+    "Blood Moon"
+]
 
 NAME = "TONSign_Classic_or_Special"
 
