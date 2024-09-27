@@ -254,7 +254,7 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
 
     while True:
         if not check_vrchat_is_running():
-            lm.info("log.vrchat_not_find")
+            lm.info("log.vrchat_not_found")
             break
         with open(log_file, "r", encoding="utf-8") as file:
             file.seek(last_position)
