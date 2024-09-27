@@ -367,7 +367,10 @@ if __name__ == "__main__":
                 sys.exit()
 
             while True:
-                check_vrchat_loop()
+                if not check_vrchat_is_running():
+                    if running_time < 1:
+                        running_time += 1
+                    check_vrchat_loop()
 
                 if running_time > 0:
                     lm.info("log.wait_until_join_game")
