@@ -1,4 +1,6 @@
+# coding: utf-8
 import argparse
+import datetime
 import glob
 import logging
 import os
@@ -6,7 +8,7 @@ import sys
 import time
 import traceback
 from enum import Enum
-from venv import logger
+from logging import StreamHandler, FileHandler
 
 import pygetwindow as gw
 import yaml
@@ -107,24 +109,52 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
+class CustomFormatterInFile(CustomFormatter):
+    time = "[%(asctime)s]"
+    level_name = "%(levelname)s"
+    message = "%(message)s"
+    all = f"{time} {level_name}: {message}"
+
+    FORMATS = {
+        logging.DEBUG: all,
+        logging.INFO: all,
+        logging.WARNING: all,
+        logging.ERROR: all,
+        logging.CRITICAL: all
+    }
+
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
+
+
 # noinspection PyShadowingNames
 class LanguageManager(object):
     language: str
     logger = logging.getLogger(NAME)
+    stream_handler: StreamHandler
+    file_handler: FileHandler
     language_dir = "Language"
     database: dict[str, dict] = {}
 
     def __init__(self, args: argparse.Namespace):
         level = logging.DEBUG if args.debug else logging.INFO
-        logger.setLevel(level)
+        self.logger.setLevel(level)
 
-        ch = logging.StreamHandler()
-        ch.setLevel(level)
-        ch.setFormatter(CustomFormatter())
+        self.stream_handler = logging.StreamHandler()
+        self.stream_handler.setLevel(level)
+        self.stream_handler.setFormatter(CustomFormatter())
 
-        logger.addHandler(ch)
+        self.logger.addHandler(self.stream_handler)
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        self.file_handler = logging.FileHandler(os.path.join(dir_path, "latest.log"), encoding="utf-8")
+        self.file_handler.setLevel(level)
+        self.file_handler.setFormatter(CustomFormatterInFile())
+
+        self.logger.addHandler(self.file_handler)
 
         for file in glob.glob(os.path.join(dir_path, self.language_dir, "*.yml")):
             with open(file, 'r', encoding="utf-8") as yml:
@@ -133,6 +163,9 @@ class LanguageManager(object):
                 self.database[lang_id] = data
                 yml.close()
         self.language = str(args.lang).lower()
+        
+    def exit_do(self):
+        self.file_handler.close()
 
     def get(self, text: str) -> str:
         if not self.language in self.database or not text in self.database[self.language]:
@@ -142,16 +175,16 @@ class LanguageManager(object):
         return self.database[self.language][text]
 
     def info(self, msg: str, *args: object) -> None:
-        logger.info(self.get(msg), *args)
+        self.logger.info(self.get(msg), *args)
 
     def warning(self, msg: str, *args: object) -> None:
-        logger.warning(self.get(msg), *args)
+        self.logger.warning(self.get(msg), *args)
 
     def error(self, msg: str, *args: object) -> None:
-        logger.error(self.get(msg), *args)
+        self.logger.error(self.get(msg), *args)
 
     def debug(self, msg: str, *args: object) -> None:
-        logger.debug(self.get(msg), *args)
+        self.logger.debug(self.get(msg), *args)
 
     def dbg(self, msg: str, *args: object) -> None:
         self.debug(msg, *args)
@@ -319,11 +352,24 @@ def run_test():
 
 
 def exit_do():
-    # dir_path = os.path.dirname(os.path.realpath(__file__))
-    # 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    log_file_path = os.path.join(dir_path, "latest.log")
+    log_folder_path = os.path.join(dir_path, "Logs")
+    now = datetime.datetime.now()
+    
+    lm.dbg("Exit!")
+
     # with open(os.path.join(dir_path, "save.yml"), "w", encoding="utf-8") as save_file:
     #     yaml.dump(save_data, save_file, default_flow_style=False)
-    lm.dbg("Exit!")
+
+    if not os.path.exists(log_folder_path):
+        os.mkdir(log_folder_path)
+
+    lm.exit_do()
+    
+    if os.path.exists(log_file_path):
+        os.rename(log_file_path, os.path.join(dir_path, "Logs", f"{now.strftime("%Y-%m-%d-%H-%M-%S")}.log"))
+        
     sys.exit()
 
 
