@@ -149,8 +149,17 @@ class LanguageManager(object):
         self.logger.addHandler(self.stream_handler)
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        log_file_path = os.path.join(dir_path, "latest.log")
+        log_folder_path = os.path.join(dir_path, "Logs")
+        now = datetime.datetime.now()
 
-        self.file_handler = logging.FileHandler(os.path.join(dir_path, "latest.log"), encoding="utf-8")
+        if not os.path.exists(log_folder_path):
+            os.mkdir(log_folder_path)
+
+        if os.path.exists(log_file_path):
+            os.rename(log_file_path, os.path.join(dir_path, "Logs", f"{now.strftime("%Y-%m-%d-%H-%M-%S")}.log"))
+
+        self.file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
         self.file_handler.setLevel(level)
         self.file_handler.setFormatter(CustomFormatterInFile())
 
