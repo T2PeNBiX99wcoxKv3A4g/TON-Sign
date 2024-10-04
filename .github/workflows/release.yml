@@ -73,8 +73,10 @@ jobs:
           name: release-asset
           path: TONSignAsset.zip
   
-  deploy:
+  upload:
     name: Create Release
+    permissions:
+      contents: write
     needs: [ windows-release-build, asset-packaging ]
     runs-on: ubuntu-latest
     steps:
