@@ -33,6 +33,11 @@ round_types: list = [
     "Solstice",
     "8 Pages",
     "Blood Moon",
+    "RUN",
+    "Cold Night",
+    "Unbound",
+    "Double Trouble", # TODO: not sure
+    "Ghost"
 ]
 
 jp_round_types: list = [
@@ -49,6 +54,11 @@ jp_round_types: list = [
     "ソルスティス",
     "8ページ",
     "ブラッドバス",
+    "走れ！",
+    "寒い夜",
+    "アンバウンド",
+    "ダブルトラブル",
+    "ゴースト" # TODO: not sure
 ]
 
 exempt_rounds: list = [
@@ -65,12 +75,17 @@ special_rounds: list = [
     "Alternate",
     "Bloodbath",
     "Midnight",
-    "8 Pages"
+    "8 Pages",
+    "Cold Night",
+    "Unbound",
+    "Double Trouble",
+    "Ghost"
 ]
 
 classic_rounds: list = [
     "Classic",
-    "Blood Moon"
+    "Blood Moon",
+    "RUN"
 ]
 
 NAME = "TONSign_Classic_or_Special"
@@ -172,7 +187,7 @@ class LanguageManager(object):
                 self.database[lang_id] = data
                 yml.close()
         self.language = str(args.lang).lower()
-        
+
     def exit_do(self):
         self.file_handler.close()
 
@@ -365,7 +380,7 @@ def exit_do():
     log_file_path = os.path.join(dir_path, "latest.log")
     log_folder_path = os.path.join(dir_path, "Logs")
     now = datetime.datetime.now()
-    
+
     lm.dbg("Exit!")
 
     # with open(os.path.join(dir_path, "save.yml"), "w", encoding="utf-8") as save_file:
@@ -375,10 +390,10 @@ def exit_do():
         os.mkdir(log_folder_path)
 
     lm.exit_do()
-    
+
     if os.path.exists(log_file_path):
         os.rename(log_file_path, os.path.join(dir_path, "Logs", f"{now.strftime("%Y-%m-%d-%H-%M-%S")}.log"))
-        
+
     sys.exit()
 
 
