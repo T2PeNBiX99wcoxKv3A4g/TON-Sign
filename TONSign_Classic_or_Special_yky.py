@@ -434,9 +434,12 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
                     lm.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
                 elif "round type is" in line:
                     parts = line.split("round type is")
+                    
                     if len(parts) > 1:
-                        possible_round_type = parts[1][1:]
+                        possible_round_type = parts[1][1:-1]
                         possible_round_type_for_print = possible_round_type
+                        
+                        lm.dbg(f"possible_round_type '{possible_round_type}'")
 
                         if possible_round_type in jp_round_types:
                             possible_round_type = round_types[jp_round_types.index(possible_round_type)]
