@@ -19,7 +19,7 @@ save_data: dict = {
 }
 
 # Current round types in game
-round_types: list = [
+round_types: list[str] = [
     "Classic",
     "Fog",
     "Punished",
@@ -40,7 +40,7 @@ round_types: list = [
     "Ghost"
 ]
 
-jp_round_types: list = [
+jp_round_types: list[str] = [
     "クラシック",
     "霧",
     "パニッシュ",
@@ -61,37 +61,58 @@ jp_round_types: list = [
     "ゴースト" # TODO: not sure
 ]
 
-exempt_rounds: list = [
-    "Mystic Moon",
-    "Twilight",
-    "Solstice"
-]
-
-special_rounds: list = [
-    "Fog",
-    "Punished",
-    "Sabotage",
-    "Cracked",
-    "Alternate",
-    "Bloodbath",
-    "Midnight",
-    "8 Pages",
-    "Cold Night",
-    "Unbound",
-    "Double Trouble",
-    "Ghost"
-]
-
-classic_rounds: list = [
-    "Classic",
-    "Blood Moon",
-    "RUN"
-]
-
 NAME = "TONSign_Classic_or_Special"
 
-
 class RoundType(Enum):
+    Unknown = -1,
+    Classic = 0
+    Fog = 1,
+    Punished = 2,
+    Sabotage = 3,
+    Cracked = 4,
+    Alternate = 5,
+    Bloodbath = 6,
+    Midnight = 7,
+    MysticMoon = 8,
+    Twilight = 9,
+    Solstice = 10,
+    EightPages = 11,
+    BloodMoon = 12,
+    RUN = 13,
+    ColdNight = 14,
+    Unbound = 15,
+    DoubleTrouble = 16,
+    Ghost = 17
+
+exempt_rounds: list[RoundType] = [
+    RoundType.MysticMoon,
+    RoundType.Twilight,
+    RoundType.Solstice
+]
+
+special_rounds: list[RoundType] = [
+    RoundType.Fog,
+    RoundType.Punished,
+    RoundType.Sabotage,
+    RoundType.Cracked,
+    RoundType.Alternate,
+    RoundType.Bloodbath,
+    RoundType.Midnight,
+    RoundType.EightPages,
+    RoundType.ColdNight,
+    RoundType.Unbound,
+    RoundType.DoubleTrouble,
+    RoundType.Ghost
+]
+
+classic_rounds: list[RoundType] = [
+    RoundType.Classic,
+    RoundType.BloodMoon,
+    RoundType.RUN
+]
+
+
+class GuessRoundType(Enum):
     NIL = -1
     Exempt = 0
     Special = 1
@@ -216,6 +237,86 @@ class LanguageManager(object):
 
 lm: LanguageManager
 
+def get_type_of_round(round: str) -> RoundType:
+    match round:
+        case "Classic":
+            return RoundType.Classic
+        case "Fog":
+            return RoundType.Fog
+        case "Punished":
+            return RoundType.Punished
+        case "Sabotage":
+            return RoundType.Sabotage
+        case "Cracked":
+            return RoundType.Cracked
+        case "Alternate":
+            return RoundType.Alternate
+        case "Bloodbath":
+            return RoundType.Bloodbath
+        case "Midnight":
+            return RoundType.Midnight
+        case "Mystic Moon":
+            return RoundType.MysticMoon
+        case "Twilight":
+            return RoundType.Twilight
+        case "Solstice":
+            return RoundType.Solstice
+        case "8 Pages":
+            return RoundType.EightPages
+        case "Blood Moon":
+            return RoundType.BloodMoon
+        case "RUN":
+            return RoundType.RUN
+        case "Cold Night":
+            return RoundType.ColdNight
+        case "Unbound":
+            return RoundType.Unbound
+        case "Double Trouble":
+            return RoundType.DoubleTrouble
+        case "Ghost":
+            return RoundType.Ghost
+    return RoundType.Unknown
+
+def get_text_from_round_type(round: RoundType, log_round: str) -> str:
+    match round:
+        case RoundType.Classic:
+            return lm.get("log.round_classic")
+        case RoundType.Fog:
+            return lm.get("log.round_fog")
+        case RoundType.Punished:
+            return lm.get("log.round_punished")
+        case RoundType.Sabotage:
+            return lm.get("log.round_sabotage")
+        case RoundType.Cracked:
+            return lm.get("log.round_cracked")
+        case RoundType.Alternate:
+            return lm.get("log.round_alternate")
+        case RoundType.Bloodbath:
+            return lm.get("log.round_bloodbath")
+        case RoundType.Midnight:
+            return lm.get("log.round_midnight")
+        case RoundType.MysticMoon:
+            return lm.get("log.round_mystic_moon")
+        case RoundType.Twilight:
+            return lm.get("log.round_twilight")   
+        case RoundType.Solstice:
+            return lm.get("log.round_solstice")
+        case RoundType.EightPages:
+            return lm.get("log.round_8_pages")
+        case RoundType.BloodMoon:
+            return lm.get("log.round_blood_moon")
+        case RoundType.RUN:
+            return lm.get("log.round_run")
+        case RoundType.ColdNight:
+            return lm.get("log.round_cold_night")
+        case RoundType.Unbound:
+            return lm.get("log.round_unbound")
+        case RoundType.DoubleTrouble:
+            return lm.get("log.round_double_trouble")
+        case RoundType.Ghost:
+            return lm.get("log.round_ghost")
+    return f"Unknown Type ({log_round})"
+
 
 def find_latest_log(directory: str) -> str | None:
     log_files = glob.glob(os.path.join(directory, "*.txt"))
@@ -228,27 +329,27 @@ def find_latest_log(directory: str) -> str | None:
     return latest_log
 
 
-def classify_round(round_type: str) -> RoundType:
+def classify_round(round_type: RoundType) -> GuessRoundType:
     if round_type in exempt_rounds:
-        return RoundType.Exempt
+        return GuessRoundType.Exempt
     elif round_type in special_rounds:
-        return RoundType.Special
+        return GuessRoundType.Special
     elif round_type in classic_rounds:
-        return RoundType.Classic
-    return RoundType.NIL
+        return GuessRoundType.Classic
+    return GuessRoundType.NIL
 
 
-def update_round_log(round_log: list[RoundType], round_type: str) -> None:
-    classification: RoundType = classify_round(round_type)
+def update_round_log(round_log: list[GuessRoundType], round_type: RoundType) -> None:
+    classification: GuessRoundType = classify_round(round_type)
 
-    if classification == RoundType.Exempt:
+    if classification == GuessRoundType.Exempt:
         if len(round_log) >= 2:
-            if round_log[-2:] == [RoundType.Classic, RoundType.Classic]:
-                classification = RoundType.Special
-            elif round_log[-2:] == [RoundType.Classic, RoundType.Special]:
-                classification = RoundType.Classic
-            elif round_log[-2:] == [RoundType.Special, RoundType.Classic]:
-                classification = RoundType.Special if is_alternate_pattern(round_log, False) else RoundType.Classic
+            if round_log[-2:] == [GuessRoundType.Classic, GuessRoundType.Classic]:
+                classification = GuessRoundType.Special
+            elif round_log[-2:] == [GuessRoundType.Classic, GuessRoundType.Special]:
+                classification = GuessRoundType.Classic
+            elif round_log[-2:] == [GuessRoundType.Special, GuessRoundType.Classic]:
+                classification = GuessRoundType.Special if is_alternate_pattern(round_log, False) else GuessRoundType.Classic
 
     round_log.append(classification)
 
@@ -256,28 +357,28 @@ def update_round_log(round_log: list[RoundType], round_type: str) -> None:
         round_log.pop(0)
 
 
-def is_alternate_pattern(round_log: list[RoundType], bonus_flag: bool) -> bool:
-    special_count = sum(1 for round_type in round_log[-6:] if round_type == RoundType.Special)
+def is_alternate_pattern(round_log: list[GuessRoundType], bonus_flag: bool) -> bool:
+    special_count = sum(1 for round_type in round_log[-6:] if round_type == GuessRoundType.Special)
     return special_count > 2 or bonus_flag
 
 
-def predict_next_round(round_log: list[RoundType], bonus_flag: bool) -> RoundType:
+def predict_next_round(round_log: list[GuessRoundType], bonus_flag: bool) -> GuessRoundType:
     if len(round_log) < 2:
-        return RoundType.Classic
+        return GuessRoundType.Classic
 
-    if round_log[-2:] == [RoundType.Special, RoundType.Special]:
+    if round_log[-2:] == [GuessRoundType.Special, GuessRoundType.Special]:
         lm.info("log.host_left_before")
         round_log.pop()
 
     if is_alternate_pattern(round_log, bonus_flag):
-        return RoundType.Classic if round_log[-1] == RoundType.Special else RoundType.Special
+        return GuessRoundType.Classic if round_log[-1] == GuessRoundType.Special else GuessRoundType.Special
     else:
-        return RoundType.Special if round_log[-2:] == [RoundType.Classic, RoundType.Classic] else RoundType.Classic
+        return GuessRoundType.Special if round_log[-2:] == [GuessRoundType.Classic, GuessRoundType.Classic] else GuessRoundType.Classic
 
 
-def get_recent_rounds_log(round_log: list[RoundType]) -> str:
+def get_recent_rounds_log(round_log: list[GuessRoundType]) -> str:
     return ", ".join([lm.get(
-        "log.recent_rounds_log_classic") if round_type == RoundType.Classic else lm.get(
+        "log.recent_rounds_log_classic") if round_type == GuessRoundType.Classic else lm.get(
         "log.recent_rounds_log_special") for round_type in round_log])
 
 
@@ -304,7 +405,7 @@ def check_vrchat_loop() -> None:
 
 # noinspection PyShadowingNames
 def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
-    round_log: list[RoundType] = []
+    round_log: list[GuessRoundType] = []
     last_position: int = 0
     last_prediction: bool = False
     bonus_flag: bool = False
@@ -331,19 +432,20 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
                     lm.info("log.saving_avatar_data")
                     osc_client.send_message("/avatar/parameters/TON_Sign", last_prediction)
                     lm.dbg("Saving Avatar Data: /avatar/parameters/TON_Sign %s", last_prediction)
-                elif "Round type is" in line:
-                    parts = line.split("Round type is")
+                elif "round type is" in line:
+                    parts = line.split("round type is")
                     if len(parts) > 1:
-                        possible_round_type = parts[1].strip().split()[0:2]
-                        possible_round_type = " ".join(possible_round_type)
+                        possible_round_type = parts[1][1:]
                         possible_round_type_for_print = possible_round_type
 
                         if possible_round_type in jp_round_types:
                             possible_round_type = round_types[jp_round_types.index(possible_round_type)]
 
                         if possible_round_type in round_types:
-                            update_round_log(round_log, possible_round_type)
-                            lm.info("log.new_round_started", possible_round_type_for_print)
+                            round_type = get_type_of_round(possible_round_type)
+                            
+                            update_round_log(round_log, round_type)
+                            lm.info("log.new_round_started", get_text_from_round_type(round_type, possible_round_type_for_print))
 
                             classic = lm.get("log.predict_next_round_classic")
                             special = lm.get("log.predict_next_round_special")
@@ -352,10 +454,10 @@ def monitor_round_types(log_file: str, osc_client: SimpleUDPClient) -> None:
                             recent_rounds_log = get_recent_rounds_log(round_log)
 
                             lm.info("log.next_round_should_be", recent_rounds_log,
-                                    special if prediction == RoundType.Special else classic)
+                                    special if prediction == GuessRoundType.Special else classic)
 
                             # Send OSC message
-                            if prediction == RoundType.Special:
+                            if prediction == GuessRoundType.Special:
                                 osc_client.send_message("/avatar/parameters/TON_Sign", True)
                                 lm.dbg("Round type is: /avatar/parameters/TON_Sign %s", True)
                                 last_prediction = True
