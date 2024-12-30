@@ -1,10 +1,10 @@
+# TON-Sign
+
 # This repository has been archived, [You can check a new gui rework version of this software](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign-GUI)
 
 # このリポジトリもうアーカイブにしてた
 
 # [こちらへ新しいのソフトウェアを見てください](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign-GUI)
-
-# TON-Sign
 
 ## By \~Emerald~
 
