@@ -1,3 +1,9 @@
+# This repository has been archived, [You can check a new gui rework version of this software](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign-GUI)
+
+# このリポジトリもうアーカイブにしてた
+
+# [こちらへ新しいのソフトウェアを見てください](https://github.com/T2PeNBiX99wcoxKv3A4g/TON-Sign-GUI)
+
 # TON-Sign
 
 ## By \~Emerald~
@@ -22,8 +28,9 @@ Please don't use original exe file, Because the code is still the same.
 ### Running the App (Fork)
 
 1. **Launch** `TONSign_Classic_or_Special_yky.exe`! if you want to run in japanese, add `-l jp` option or just
-   run `TONSign_Classic_or_Special_yky_JP.lnk`. ~~(I didn't test with other people at all, So I hope the program won't be
-   recognized as a virus.)~~
+   run `TONSign_Classic_or_Special_yky_JP.lnk`. ~~(I didn't test with other people at all, So I hope the program won't
+   be
+   recognized as a virus.)~~ NO
 2. **Start some rounds in Terrors of Nowhere.**
     - The app will handle the rest!
 
