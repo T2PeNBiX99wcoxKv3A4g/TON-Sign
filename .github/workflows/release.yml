@@ -31,7 +31,7 @@ jobs:
         with:
           nuitka-version: main
           script-name: TONSign_Classic_or_Special_yky.py
-          standalone: true
+          mode: standalone
 
       - name: Copy Language Folder
         run: Copy-Item -Path "Language" -Destination "build/TONSign_Classic_or_Special_yky.dist" -Recurse
